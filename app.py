@@ -29,13 +29,14 @@ class Product(Resource):
     def find_product(self, product_id):
         return [product for product in products if product['_id'] == product_id]
 
-    def get(self, product_id):
-        product = self.find_product(product_id)
+    def not_found(self, product_id, product):
         if len(product) == 0:
             return abort(404, message=f"Product { product_id } doesn't exit.")
-        return {'product': product[0]}
 
-    # def put(self, product_id):
+    def get(self, product_id):
+        product = self.find_product(product_id)
+        self.not_found(product_id, product)
+        return {'product': product[0]}
 
 
 api.add_resource(ProductsList, '/products')
