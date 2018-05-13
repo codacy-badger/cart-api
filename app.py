@@ -38,6 +38,16 @@ class Product(Resource):
         self.not_found(product_id, product)
         return {'product': product[0]}
 
+    def put(self, product_id):
+        product = self.find_product(product_id)
+        self.not_found(product_id, product)
+        product[0]['name'] = request.json.get('name')
+        product[0]['price'] = request.json.get('price')
+        product[0]['description'] = request.json.get(
+            'description')
+
+        return {"products": products}
+
 
 api.add_resource(ProductsList, '/products')
 api.add_resource(Product, '/product/<int:product_id>')
