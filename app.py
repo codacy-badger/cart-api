@@ -4,8 +4,7 @@ from flask_restful import Resource, Api, abort
 app = Flask(__name__)
 api = Api(app)
 
-products = [{'_id': 1, "name": "Nokia 2", "price": 9800,
-             "description": "Some nice Desc about the product"}]
+products = []
 
 
 class ProductsList(Resource):
@@ -41,11 +40,17 @@ class Product(Resource):
     def put(self, product_id):
         product = self.find_product(product_id)
         self.not_found(product_id, product)
-        product[0]['name'] = request.json.get('name')
-        product[0]['price'] = request.json.get('price')
+        product[0]['name'] = request.json.get('name', product[0]['name'])
+        product[0]['price'] = request.json.get('price', product[0]['price'])
         product[0]['description'] = request.json.get(
-            'description')
+            'description', product[0]['description'])
 
+        return {"products": products}
+
+    def delete(self, product_id):
+        product = self.find_product(product_id)
+        self.not_found(product_id, product)
+        products.remove(product[0])
         return {"products": products}
 
 
