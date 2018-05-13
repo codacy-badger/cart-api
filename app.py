@@ -12,6 +12,18 @@ class ProductsList(Resource):
     def get(self):
         return {'products': products}
 
+    def post(self):
+        product = {
+            "_id": products[-1]["_id"] + 1,
+            "name": request.json.get('name'),
+            "price": request.json.get('price'),
+            "description": request.json.get("description", "")
+        }
+
+        products.append(product)
+
+        return {"product": product}, 201
+
 
 class Product(Resource):
     def find_product(self, product_id):
