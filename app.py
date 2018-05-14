@@ -13,7 +13,7 @@ class ProductsList(Resource):
 
     def post(self):
         product = {
-            "_id": products[-1]["_id"] + 1,
+            "product_id": products[-1]["product_id"] + 1 if products else 1,
             "name": request.json.get('name'),
             "price": request.json.get('price'),
             "description": request.json.get("description", "")
@@ -25,21 +25,21 @@ class ProductsList(Resource):
 
 
 class Product(Resource):
-    def find_product(self, product_id):
-        return [product for product in products if product['_id'] == product_id]
+    def find_product(self, productproduct_id):
+        return [product for product in products if product['product_id'] == productproduct_id]
 
-    def not_found(self, product_id, product):
+    def not_found(self, productproduct_id, product):
         if len(product) == 0:
-            return abort(404, message=f"Product { product_id } doesn't exit.")
+            return abort(404, message=f"Product { productproduct_id } doesn't exit.")
 
-    def get(self, product_id):
-        product = self.find_product(product_id)
-        self.not_found(product_id, product)
+    def get(self, productproduct_id):
+        product = self.find_product(productproduct_id)
+        self.not_found(productproduct_id, product)
         return {'product': product[0]}
 
-    def put(self, product_id):
-        product = self.find_product(product_id)
-        self.not_found(product_id, product)
+    def put(self, productproduct_id):
+        product = self.find_product(productproduct_id)
+        self.not_found(productproduct_id, product)
         product[0]['name'] = request.json.get('name', product[0]['name'])
         product[0]['price'] = request.json.get('price', product[0]['price'])
         product[0]['description'] = request.json.get(
@@ -47,15 +47,15 @@ class Product(Resource):
 
         return {"products": products}
 
-    def delete(self, product_id):
-        product = self.find_product(product_id)
-        self.not_found(product_id, product)
+    def delete(self, productproduct_id):
+        product = self.find_product(productproduct_id)
+        self.not_found(productproduct_id, product)
         products.remove(product[0])
         return {"products": products}
 
 
 api.add_resource(ProductsList, '/products')
-api.add_resource(Product, '/product/<int:product_id>')
+api.add_resource(Product, '/product/<int:productproduct_id>')
 
 
 if __name__ == '__main__':
