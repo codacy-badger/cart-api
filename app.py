@@ -7,16 +7,21 @@ api = Api(app)
 products = []
 
 
+def find_product(product_id):
+    return [product for product in products if product['product_id'] == product_id]
+
+
 class ProductsList(Resource):
     def get(self):
         return {'products': products}
 
     def post(self):
+        data = request.get_json()
         product = {
             "product_id": products[-1]["product_id"] + 1 if products else 1,
-            "name": request.json.get('name'),
-            "price": request.json.get('price'),
-            "description": request.json.get("description", "")
+            "name": data['name'],
+            "price": data['price'],
+            "description": data['description']
         }
 
         products.append(product)
@@ -25,37 +30,34 @@ class ProductsList(Resource):
 
 
 class Product(Resource):
-    def find_product(self, productproduct_id):
-        return [product for product in products if product['product_id'] == productproduct_id]
-
-    def not_found(self, productproduct_id, product):
+    def get(self, product_id):
+        product = find_product(product_id)
         if len(product) == 0:
-            return abort(404, message=f"Product { productproduct_id } doesn't exit.")
-
-    def get(self, productproduct_id):
-        product = self.find_product(productproduct_id)
-        self.not_found(productproduct_id, product)
+            return abort(404, message=f"Product { product_id } doesn't exit.")
         return {'product': product[0]}
 
-    def put(self, productproduct_id):
-        product = self.find_product(productproduct_id)
-        self.not_found(productproduct_id, product)
-        product[0]['name'] = request.json.get('name', product[0]['name'])
+    def put(self, product_id):
+        product = find_product(product_id)
+        if len(product) == 0:
+            return abort(404, message=f"Product { product_id } doesn't exit.")
+        product[0]['name'] = request.json.get(
+            'name', product[0]['name'])
         product[0]['price'] = request.json.get('price', product[0]['price'])
         product[0]['description'] = request.json.get(
             'description', product[0]['description'])
 
         return {"products": products}
 
-    def delete(self, productproduct_id):
-        product = self.find_product(productproduct_id)
-        self.not_found(productproduct_id, product)
+    def delete(self, product_id):
+        product = find_product(product_id)
+        if len(product) == 0:
+            return abort(404, message=f"Product { product_id } doesn't exit.")
         products.remove(product[0])
         return {"products": products}
 
 
 api.add_resource(ProductsList, '/products')
-api.add_resource(Product, '/product/<int:productproduct_id>')
+api.add_resource(Product, '/product/<int:product_id>')
 
 
 if __name__ == '__main__':
